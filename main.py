@@ -58,6 +58,27 @@ change_to = direction
 
 score = 0
 
+def restart_button():
+    my_font = pygame.font.SysFont('times new roman', 30)
+    restart_surface = my_font.render('TRY AGAIN? PRESS ENTER TO RESTART\nOR ESC TO ESCAPE', True, white)
+    restart_rect = restart_surface.get_rect()
+    restart_rect.midtop = (frame_size_x/2, frame_size_y/1.5)
+    game_window.blit(restart_surface, restart_rect)
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    #main()
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+        
+
 
 # Game Over
 def game_over():
