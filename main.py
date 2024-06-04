@@ -95,14 +95,23 @@ def show_score(choice, color, font, size):
         score_rect.midtop = (frame_size_x/2, frame_size_y/1.25)
     game_window.blit(score_surface, score_rect)
     # pygame.display.flip()
+    lives_surface = score_font.render('Lives : ' + str(lives), True, color)
+    lives_rect = lives_surface.get_rect()
+    lives_rect.midtop = (frame_size_x/1.2, 15)
+    game_window.blit(lives_surface, lives_rect)
 
 score = 0
+lives = 0
 
 # Main logic
 def main():
     # Game variables
     global score
+    global lives
+    
     score = 0
+    lives = 3
+
     snake_pos = [100, 50]
     snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
 
@@ -179,13 +188,19 @@ def main():
         # Game Over conditions
         # Getting out of bounds
         if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
-            game_over()
+            if lives > 0:
+                lives -= 1
+            else: game_over()
         if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
-            game_over()
+            if lives > 0:
+                lives -= 1
+            else: game_over()
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
-                game_over()
+                if lives > 0:
+                    lives -= 1
+                else: game_over()
 
         show_score(1, white, 'consolas', 20)
         # Refresh game screen
