@@ -73,16 +73,22 @@ def restart_button():
 
 
 # Game Over
-def game_over():
-    my_font = pygame.font.SysFont('times new roman', 90)
-    game_over_surface = my_font.render('YOU DIED', True, red)
-    game_over_rect = game_over_surface.get_rect()
-    game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
-    game_window.fill(black)
-    game_window.blit(game_over_surface, game_over_rect)
-    show_score(0, red, 'times', 20)
-    pygame.display.flip()
-    restart_button()
+def game_over(snake_body):
+    global lives
+    lives -= 1
+    if lives <= 0:
+        my_font = pygame.font.SysFont('times new roman', 90)
+        game_over_surface = my_font.render('YOU DIED', True, red)
+        game_over_rect = game_over_surface.get_rect()
+        game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
+        game_window.fill(black)
+        game_window.blit(game_over_surface, game_over_rect)
+        show_score(0, red, 'times', 20)
+        pygame.display.flip()
+        restart_button()
+    else:
+        snake_pos = [frame_size_x//2 , frame_size_y//2]
+        return snake_pos
 
 # Score
 def show_score(choice, color, font, size):
@@ -108,7 +114,7 @@ def main():
     # Game variables
     global score
     global lives
-    
+
     score = 0
     lives = 3
 
@@ -188,19 +194,13 @@ def main():
         # Game Over conditions
         # Getting out of bounds
         if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
-            if lives > 0:
-                lives -= 1
-            else: game_over()
+            snake_pos = game_over(snake_pos)
         if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
-            if lives > 0:
-                lives -= 1
-            else: game_over()
+            snake_pos = game_over(snake_pos)
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
-                if lives > 0:
-                    lives -= 1
-                else: game_over()
+                snake_pos = game_over(snake_pos)
 
         show_score(1, white, 'consolas', 20)
         # Refresh game screen
