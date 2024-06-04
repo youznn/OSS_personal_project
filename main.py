@@ -101,6 +101,8 @@ score = 0
 # Main logic
 def main():
     # Game variables
+    global score
+    score = 0
     snake_pos = [100, 50]
     snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
 
