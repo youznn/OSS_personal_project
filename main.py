@@ -114,7 +114,7 @@ def start_screen():
     global difficulty
     difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
     diff_colors = [white, yellow, orange, red]
-    cursor = 0
+    cursor = 1
     font = pygame.font.Font(font_path, 70)
     game_window.fill(black)
     start_surface = font.render('SNAKE EATER', True, green)
