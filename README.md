@@ -48,16 +48,42 @@
 |OS|지원여부|
 |---|---|
 |Windows|⭕️|
-|Linux|⭕️|
+|Linux||
 |Mac|⭕️|
 
 ### Windows
 1. python 3.12 버전을 설치합니다. https://www.python.org/downloads/
 2. windows powershell에서 다음 명령어를 입력하여 pygame을 설치합니다.
-```
-pip install pygame
-```
+ ```
+ pip3 install pygame
+ ```
+3. 재부팅 이후 `python3 main.py`를 실행하면 게임이 시작됩니다.
 
+### Linux
+터미널을 열고 다음 과정을 차례로 수행합니다.
+1. python 3.12 설치
+  ```
+  sudo apt-get update
+  sudo apt-get install python3
+  ```
+2. pip 설치
+  ```
+  sudo apt-get install python3-pip
+  ```
+3. pygame 설치
+  ```
+  sudo apt-get install python3-pip
+  ```
+4. 프로젝트 최상위 디렉토리에서 `python3 main.py`를 실행하면 게임이 시작됩니다.
 
+### Mac OS
+터미널을 열고 다음 과정을 차례로 수행합니다.
+1. pygame 설치
+  ```
+   pip3 install pygame
+  ```
+2. 프로젝트 최상위 디렉토리에서 `python3 main.py`를 실행하면 게임이 시작됩니다.
+
+# 코드 설명
 
 
