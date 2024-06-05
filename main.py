@@ -5,6 +5,12 @@ Made with PyGame
 
 import pygame, sys, time, random
 
+# Initialize Pygame
+pygame.init()
+
+# Load the image
+apple_image = pygame.image.load('apple.png')
+apple_image = pygame.transform.scale(apple_image, (10, 10))
 
 # Difficulty settings
 # Easy      ->  10
@@ -28,11 +34,9 @@ if check_errors[1] > 0:
 else:
     print('[+] Game successfully initialised')
 
-
 # Initialise game window
 pygame.display.set_caption('Snake Eater')
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
-
 
 # Colors (R, G, B)
 black = pygame.Color(0, 0, 0)
@@ -41,10 +45,8 @@ red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
 
-
 # FPS (frames per second) controller
 fps_controller = pygame.time.Clock()
-
 
 def restart_button():
     my_font = pygame.font.SysFont('times new roman', 25)
@@ -69,8 +71,6 @@ def restart_button():
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-        
-
 
 # Game Over
 def game_over(snake_body):
@@ -202,7 +202,8 @@ def main():
             pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
 
         # Snake food
-        pygame.draw.rect(game_window, white, pygame.Rect(food_pos[0], food_pos[1], 10, 10))
+        apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
+        game_window.blit(apple_image, apple_rect)
 
         # Game Over conditions
         # Getting out of bounds
