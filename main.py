@@ -14,6 +14,8 @@ apple_image = pygame.transform.scale(apple_image, (10, 10))
 heart_image = pygame.image.load('heart.png')
 heart_image = pygame.transform.scale(heart_image, (20, 20))
 
+font_path = 'Retro Gaming.ttf'
+
 # Difficulty settings
 # Easy      ->  10
 # Medium    ->  25
@@ -51,7 +53,7 @@ blue = pygame.Color(0, 0, 255)
 fps_controller = pygame.time.Clock()
 
 def restart_button():
-    my_font = pygame.font.SysFont('times new roman', 25)
+    my_font = pygame.font.Font(font_path, 25)
     restart_surface1 = my_font.render('TRY AGAIN? PRESS ENTER TO RESTART', True, white)
     restart_rect1 = restart_surface1.get_rect()
     restart_rect1.midtop = (frame_size_x/2, frame_size_y/1.8)
@@ -79,13 +81,13 @@ def game_over(snake_body):
     global lives
     lives -= 1
     if lives <= 0:
-        my_font = pygame.font.SysFont('times new roman', 90)
+        my_font = pygame.font.Font(font_path, 90)
         game_over_surface = my_font.render('YOU DIED', True, red)
         game_over_rect = game_over_surface.get_rect()
         game_over_rect.midtop = (frame_size_x/2, frame_size_y/4)
         game_window.fill(black)
         game_window.blit(game_over_surface, game_over_rect)
-        show_score(0, red, 'times', 20)
+        show_score(0, red, font_path, 20)
         pygame.display.flip()
         restart_button()
     else:
@@ -107,7 +109,7 @@ def blink_snake(snake_body):
 
 # Score
 def show_score(choice, color, font, size):
-    score_font = pygame.font.SysFont(font, size)
+    score_font = pygame.font.Font(font, size)
     score_surface = score_font.render('Score : ' + str(score), True, color)
     score_rect = score_surface.get_rect()
     if choice == 1:
@@ -217,7 +219,7 @@ def main():
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
                 snake_pos = game_over(snake_body)
 
-        show_score(1, white, 'consolas', 20)
+        show_score(1, white, font_path, 20)
         # Refresh game screen
         pygame.display.update()
         # Refresh rate
