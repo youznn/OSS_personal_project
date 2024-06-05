@@ -107,6 +107,26 @@ def blink_snake(snake_body):
         pygame.display.flip()
         pygame.time.wait(200)
 
+def start_screen():
+    font = pygame.font.Font(font_path, 70)
+    game_window.fill(black)
+    start_surface = font.render('SNAKE EATER', True, green)
+    start_rect = start_surface.get_rect()
+    start_rect.midtop = (frame_size_x/2, frame_size_y/4)
+    game_window.blit(start_surface, start_rect)
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+
 # Score
 def show_score(choice, color, font, size):
     score_font = pygame.font.Font(font, size)
@@ -142,6 +162,8 @@ def main():
 
     direction = 'RIGHT'
     change_to = direction
+    start_screen()
+    pygame.display.flip()
 
     while True:
         for event in pygame.event.get():
