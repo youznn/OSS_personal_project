@@ -269,9 +269,20 @@ def main():
         food_spawn = True
 
         # GFX
+
+        rotated_head = snake_head_image
+        if direction == 'UP':
+            rotated_head = pygame.transform.rotate(snake_head_image, 0)
+        elif direction == 'DOWN':
+            rotated_head = pygame.transform.rotate(snake_head_image, 180)
+        elif direction == 'LEFT':
+            rotated_head = pygame.transform.rotate(snake_head_image, 90)
+        else:  # direction == 'RIGHT'
+            rotated_head = pygame.transform.rotate(snake_head_image, 270)
         game_window.fill(black)
-        snake_head_rect = snake_head_image.get_rect(topleft=(snake_body[0][0], snake_body[0][1]))
-        game_window.blit(snake_head_image, snake_head_rect)
+
+        snake_head_rect = rotated_head.get_rect(topleft=(snake_body[0][0], snake_body[0][1]))
+        game_window.blit(rotated_head, snake_head_rect)
 
         for pos in snake_body[1:]:
             # Snake body
