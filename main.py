@@ -45,6 +45,8 @@ game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
 # Colors (R, G, B)
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
+yellow = pygame.Color(255, 255, 0)
+orange = pygame.Color(255, 165, 0)
 red = pygame.Color(255, 0, 0)
 green = pygame.Color(0, 255, 0)
 blue = pygame.Color(0, 0, 255)
@@ -111,6 +113,7 @@ def start_screen():
     # 초기 난이도
     global difficulty
     difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
+    diff_colors = [white, yellow, orange, red]
     cursor = 0
     font = pygame.font.Font(font_path, 70)
     game_window.fill(black)
@@ -127,7 +130,11 @@ def start_screen():
 
 
     # 난이도 선택
-    difficulty_text = font.render(difficulties[cursor], True, white)
+    diff_font = pygame.font.Font(font_path, 20)
+    diff_info_text = diff_font.render('CHOOSE DIFFICULTY: UP/DOWN KEYS', True, white)
+    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2, frame_size_y/1.5))
+    game_window.blit(diff_info_text, diff_info_rect)
+    difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
     difficulty_rect = difficulty_text.get_rect(midtop=(frame_size_x/4, frame_size_y/1.3))
     game_window.blit(difficulty_text, difficulty_rect)
 
@@ -140,25 +147,27 @@ def start_screen():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    difficulty = [10, 25, 40, 60, 120][cursor]
+                    difficulty = [10, 25, 40, 120][cursor]
                     return
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
                 elif event.key == pygame.K_UP:
                     cursor = min(3, cursor +1)
-                    difficulty_text = font.render(difficulties[cursor], True, white)
+                    difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
                     game_window.fill(black) 
                     game_window.blit(start_surface, start_rect)
                     game_window.blit(info_surface, info_rect)
+                    game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
                     pygame.display.flip()
                 elif event.key == pygame.K_DOWN:
                     cursor = max(0, cursor- 1)
-                    difficulty_text = font.render(difficulties[cursor], True, white)
+                    difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
                     game_window.fill(black)
                     game_window.blit(start_surface, start_rect)
                     game_window.blit(info_surface, info_rect)
+                    game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
                     pygame.display.flip()
 
