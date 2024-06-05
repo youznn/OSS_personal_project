@@ -9,13 +9,13 @@ import pygame, sys, time, random
 pygame.init()
 
 # Load the image
-apple_image = pygame.image.load('apple.png')
+apple_image = pygame.image.load('./assets/apple.png')
 apple_image = pygame.transform.scale(apple_image, (20, 20))
-heart_image = pygame.image.load('heart.png')
+heart_image = pygame.image.load('./assets/heart.png')
 heart_image = pygame.transform.scale(heart_image, (20, 20))
-snake_head_image = pygame.image.load('snake_head.png')
+snake_head_image = pygame.image.load('./assets/snake_head.png')
 snake_head_image = pygame.transform.scale(snake_head_image, (20,20))
-snake_body_image = pygame.image.load('snake_body.png')
+snake_body_image = pygame.image.load('./assets/snake_body.png')
 snake_body_image = pygame.transform.scale(snake_body_image, (20,20))
 
 font_path = 'Retro Gaming.ttf'
