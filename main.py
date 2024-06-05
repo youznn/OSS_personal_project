@@ -10,9 +10,13 @@ pygame.init()
 
 # Load the image
 apple_image = pygame.image.load('apple.png')
-apple_image = pygame.transform.scale(apple_image, (10, 10))
+apple_image = pygame.transform.scale(apple_image, (20, 20))
 heart_image = pygame.image.load('heart.png')
 heart_image = pygame.transform.scale(heart_image, (20, 20))
+snake_head_image = pygame.image.load('snake_head.png')
+snake_head_image = pygame.transform.scale(snake_head_image, (20,20))
+snake_body_image = pygame.image.load('snake_body.png')
+snake_body_image = pygame.transform.scale(snake_body_image, (20,20))
 
 font_path = 'Retro Gaming.ttf'
 
@@ -102,7 +106,7 @@ def blink_snake(snake_body):
     while pygame.time.get_ticks() - blink_ticks < 1000:
         game_window.fill(black)
         for pos in snake_body:
-            pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+            pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 20, 20))
         pygame.display.flip()
         pygame.time.wait(200)
         game_window.fill(black)
@@ -198,17 +202,18 @@ def main():
 
     score = 0
     lives = 3
+    start_screen()
+    pygame.display.flip()
 
-    snake_pos = [100, 50]
-    snake_body = [[100, 50], [100-10, 50], [100-(2*10), 50]]
+    snake_pos = [frame_size_x//2, frame_size_y//2]
+    snake_body = [[frame_size_x//2, frame_size_y//2], [frame_size_x//2 - 20, frame_size_y//2], [frame_size_x//2-(2*20), frame_size_y//2]]
 
-    food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
+    food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
     food_spawn = True
 
     direction = 'RIGHT'
     change_to = direction
-    start_screen()
-    pygame.display.flip()
+
 
     while True:
         for event in pygame.event.get():
@@ -242,13 +247,13 @@ def main():
 
         # Moving the snake
         if direction == 'UP':
-            snake_pos[1] -= 10
+            snake_pos[1] -= 20
         if direction == 'DOWN':
-            snake_pos[1] += 10
+            snake_pos[1] += 20
         if direction == 'LEFT':
-            snake_pos[0] -= 10
+            snake_pos[0] -= 20
         if direction == 'RIGHT':
-            snake_pos[0] += 10
+            snake_pos[0] += 20
 
         # Snake body growing mechanism
         snake_body.insert(0, list(snake_pos))
@@ -260,16 +265,21 @@ def main():
 
         # Spawning food on the screen
         if not food_spawn:
-            food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
+            food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
         food_spawn = True
 
         # GFX
         game_window.fill(black)
-        for pos in snake_body:
+        snake_head_rect = snake_head_image.get_rect(topleft=(snake_body[0][0], snake_body[0][1]))
+        game_window.blit(snake_head_image, snake_head_rect)
+
+        for pos in snake_body[1:]:
             # Snake body
             # .draw.rect(play_surface, color, xy-coordinate)
             # xy-coordinate -> .Rect(x, y, size_x, size_y)
-            pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+            snake_body_rect = snake_body_image.get_rect(topleft=(pos[0],pos[1]))
+            game_window.blit(snake_body_image, snake_body_rect)
+            #pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 20, 20))
 
         # Snake food
         apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
@@ -277,9 +287,9 @@ def main():
 
         # Game Over conditions
         # Getting out of bounds
-        if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
+        if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-20:
             snake_pos = game_over(snake_body)
-        if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
+        if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-20:
             snake_pos = game_over(snake_body)
         # Touching the snake body
         for block in snake_body[1:]:
