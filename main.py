@@ -11,6 +11,8 @@ pygame.init()
 # Load the image
 apple_image = pygame.image.load('apple.png')
 apple_image = pygame.transform.scale(apple_image, (10, 10))
+heart_image = pygame.image.load('heart.png')
+heart_image = pygame.transform.scale(heart_image, (20, 20))
 
 # Difficulty settings
 # Easy      ->  10
@@ -114,10 +116,9 @@ def show_score(choice, color, font, size):
         score_rect.midtop = (frame_size_x/2, frame_size_y/1.25)
     game_window.blit(score_surface, score_rect)
     # pygame.display.flip()
-    lives_surface = score_font.render('Lives : ' + str(lives), True, color)
-    lives_rect = lives_surface.get_rect()
-    lives_rect.midtop = (frame_size_x/1.2, 15)
-    game_window.blit(lives_surface, lives_rect)
+    for i in range(lives):
+        heart_rect = heart_image.get_rect(midtop=(frame_size_x/1.2 + i * 30, 15))
+        game_window.blit(heart_image, heart_rect)
 
 score = 0
 lives = 0
