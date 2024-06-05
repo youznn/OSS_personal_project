@@ -48,7 +48,7 @@
 |OS|지원여부|
 |---|---|
 |Windows|⭕️|
-|Linux||
+|Linux|⭕️|
 |Mac|⭕️|
 
 ### Windows
