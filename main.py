@@ -132,7 +132,7 @@ def start_screen():
     # 난이도 선택
     diff_font = pygame.font.Font(font_path, 20)
     diff_info_text = diff_font.render('CHOOSE DIFFICULTY: UP/DOWN KEYS', True, white)
-    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2, frame_size_y/1.5))
+    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/1.35))
     game_window.blit(diff_info_text, diff_info_rect)
     difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
     difficulty_rect = difficulty_text.get_rect(midtop=(frame_size_x/4, frame_size_y/1.3))
