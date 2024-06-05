@@ -151,7 +151,7 @@ def start_screen():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    difficulty = [10, 25, 40, 120][cursor]
+                    difficulty = [10, 20, 35, 80][cursor]
                     return
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
