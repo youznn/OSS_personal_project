@@ -108,13 +108,31 @@ def blink_snake(snake_body):
         pygame.time.wait(200)
 
 def start_screen():
+    # 초기 난이도
+    global difficulty
+    difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
+    cursor = 0
     font = pygame.font.Font(font_path, 70)
     game_window.fill(black)
     start_surface = font.render('SNAKE EATER', True, green)
     start_rect = start_surface.get_rect()
     start_rect.midtop = (frame_size_x/2, frame_size_y/4)
     game_window.blit(start_surface, start_rect)
+
+    info_font = pygame.font.Font(font_path, 25) 
+    info_surface = info_font.render('PRESS ENTER TO START', True, white)
+    info_rect = info_surface.get_rect()
+    info_rect.midtop = (frame_size_x/2, frame_size_y/1.8)
+    game_window.blit(info_surface, info_rect)
+
+
+    # 난이도 선택
+    difficulty_text = font.render(difficulties[cursor], True, white)
+    difficulty_rect = difficulty_text.get_rect(midtop=(frame_size_x/4, frame_size_y/1.3))
+    game_window.blit(difficulty_text, difficulty_rect)
+
     pygame.display.flip()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,10 +140,28 @@ def start_screen():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    difficulty = [10, 25, 40, 60, 120][cursor]
                     return
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                elif event.key == pygame.K_UP:
+                    cursor = min(3, cursor +1)
+                    difficulty_text = font.render(difficulties[cursor], True, white)
+                    game_window.fill(black) 
+                    game_window.blit(start_surface, start_rect)
+                    game_window.blit(info_surface, info_rect)
+                    game_window.blit(difficulty_text, difficulty_rect)
+                    pygame.display.flip()
+                elif event.key == pygame.K_DOWN:
+                    cursor = max(0, cursor- 1)
+                    difficulty_text = font.render(difficulties[cursor], True, white)
+                    game_window.fill(black)
+                    game_window.blit(start_surface, start_rect)
+                    game_window.blit(info_surface, info_rect)
+                    game_window.blit(difficulty_text, difficulty_rect)
+                    pygame.display.flip()
+
 
 # Score
 def show_score(choice, color, font, size):
