@@ -88,7 +88,20 @@ def game_over(snake_body):
         restart_button()
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
+        blink_snake(snake_body)
         return snake_pos
+
+def blink_snake(snake_body):
+    blink_ticks = pygame.time.get_ticks()
+    while pygame.time.get_ticks() - blink_ticks < 1000:
+        game_window.fill(black)
+        for pos in snake_body:
+            pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+        pygame.display.flip()
+        pygame.time.wait(200)
+        game_window.fill(black)
+        pygame.display.flip()
+        pygame.time.wait(200)
 
 # Score
 def show_score(choice, color, font, size):
@@ -194,13 +207,13 @@ def main():
         # Game Over conditions
         # Getting out of bounds
         if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-10:
-            snake_pos = game_over(snake_pos)
+            snake_pos = game_over(snake_body)
         if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-10:
-            snake_pos = game_over(snake_pos)
+            snake_pos = game_over(snake_body)
         # Touching the snake body
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
-                snake_pos = game_over(snake_pos)
+                snake_pos = game_over(snake_body)
 
         show_score(1, white, 'consolas', 20)
         # Refresh game screen
