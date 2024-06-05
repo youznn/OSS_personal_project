@@ -58,6 +58,8 @@ blue = pygame.Color(0, 0, 255)
 # FPS (frames per second) controller
 fps_controller = pygame.time.Clock()
 
+
+#restart 화면입니다
 def restart_button():
     my_font = pygame.font.Font(font_path, 25)
     restart_surface1 = my_font.render('TRY AGAIN? PRESS ENTER TO RESTART', True, white)
@@ -75,9 +77,11 @@ def restart_button():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            #Enter key
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     main()
+                #ESC key
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -86,6 +90,8 @@ def restart_button():
 def game_over(snake_body):
     global lives
     lives -= 1
+    
+    #목숨이 전부 소진된다면 게임을 끝냅니다
     if lives <= 0:
         my_font = pygame.font.Font(font_path, 90)
         game_over_surface = my_font.render('YOU DIED', True, red)
@@ -96,11 +102,14 @@ def game_over(snake_body):
         show_score(0, red, font_path, 20)
         pygame.display.flip()
         restart_button()
+
+    #목숨이 남아있을 경우, pos를 가운데로 옮깁니다.
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
         return snake_pos
 
+#목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
 def blink_snake(snake_body):
     blink_ticks = pygame.time.get_ticks()
     while pygame.time.get_ticks() - blink_ticks < 1000:
@@ -113,8 +122,9 @@ def blink_snake(snake_body):
         pygame.display.flip()
         pygame.time.wait(200)
 
+#초기 화면
 def start_screen():
-    # 초기 난이도
+    # 초기 난이도 = MEDIUM
     global difficulty
     difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
     diff_colors = [white, yellow, orange, red]
@@ -131,7 +141,6 @@ def start_screen():
     info_rect = info_surface.get_rect()
     info_rect.midtop = (frame_size_x/2, frame_size_y/1.8)
     game_window.blit(info_surface, info_rect)
-
 
     # 난이도 선택
     diff_font = pygame.font.Font(font_path, 20)
