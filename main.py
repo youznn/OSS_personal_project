@@ -23,6 +23,9 @@ snake_body_image = pygame.transform.scale(snake_body_image, (20,20))
 ####################################################################
 redrec_image = pygame.image.load('./assets/redrec.png')
 redrec_image = pygame.transform.scale(redrec_image, (20, 20))
+
+poison_apple_image = pygame.image.load('./assets/poison_apple.png')
+poison_apple_image = pygame.transform.scale(poison_apple_image, (20, 20))
 ####################################################################
 ####################phase2추가######################################
 ####################################################################
