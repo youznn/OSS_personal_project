@@ -105,7 +105,7 @@ def restart_button():
 def game_over(snake_body):
     global lives
     global hp
-    hp = 30
+    hp = 30                 # phase2 추가################################################
     lives -= 1
     
     #목숨이 전부 소진된다면 게임을 끝냅니다
