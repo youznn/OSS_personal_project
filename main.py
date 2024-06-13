@@ -104,6 +104,8 @@ def restart_button():
 # Game Over
 def game_over(snake_body):
     global lives
+    global hp
+    hp = 30
     lives -= 1
     
     #목숨이 전부 소진된다면 게임을 끝냅니다
@@ -200,6 +202,21 @@ def start_screen():
                     game_window.blit(difficulty_text, difficulty_rect)
                     pygame.display.flip()
 
+####################################################################
+####################phase2추가######################################
+####################################################################
+def draw_hp_bar():
+    # Draw "HP :" text
+    hp_font = pygame.font.Font(font_path, 20)
+    hp_text_surface = hp_font.render('HP :', True, white)
+    hp_text_rect = hp_text_surface.get_rect(midtop=(frame_size_x / 2 - 80, 6))
+    game_window.blit(hp_text_surface, hp_text_rect)
+
+    pygame.draw.rect(game_window, red, pygame.Rect(frame_size_x / 2 - 50, 10, hp, 20))
+####################################################################
+####################phase2추가######################################
+####################################################################
+
 
 # Score
 def show_score(choice, color, font, size):
@@ -240,11 +257,14 @@ def main():
     # Game variables
     global score
     global lives
-    global poison_apple_timer       # phase 2 추가 by woong ####################################
-
+    global poison_apple_timer       # phase 2 추가 ####################################
+    global difficulty               # phase 2 추가
+    global hp 
+    hp = 30
+    last_hp_update = 0
     score = 0
     lives = 3
-    poison_apple_timer = 0          # phase 2 추가 by woong ####################################
+    poison_apple_timer = 0          # phase 2 추가 ####################################
     start_screen()
     pygame.display.flip()
 
@@ -333,6 +353,8 @@ def main():
             else:
                 score += 1
                 poison_apple_timer = 0
+                difficulty += 1
+                hp += 10
             food_spawn = False
             is_poison_apple = False
         else:
@@ -374,6 +396,15 @@ def main():
             is_poison_apple = False
             food_spawn = False
             poison_apple_timer = 0
+
+        # Reduce hp over time
+        if pygame.time.get_ticks() - last_hp_update > 1000:
+            hp = max(hp - 1, 0)
+            last_hp_update = pygame.time.get_ticks()
+
+        # Check if hp is 0 and call game_over
+        if hp == 0:
+            snake_pos = game_over(snake_body)
 
         ####################################################################
         ####################phase2추가######################################
@@ -473,6 +504,7 @@ def main():
         ####################################################################
 
         show_score(1, white, font_path, 20)
+        draw_hp_bar()               ######phase2 추가##################################################
         # Refresh game screen
         pygame.display.update()
         # Refresh rate
