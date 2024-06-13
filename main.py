@@ -26,6 +26,8 @@ redrec_image = pygame.transform.scale(redrec_image, (20, 20))
 
 poison_apple_image = pygame.image.load('./assets/poison_apple.png')
 poison_apple_image = pygame.transform.scale(poison_apple_image, (20, 20))
+
+poison_apple_timer = 0
 ####################################################################
 ####################phase2추가######################################
 ####################################################################
@@ -237,9 +239,11 @@ def main():
     # Game variables
     global score
     global lives
+    global poison_apple_timer       # phase 2 추가 by woong ####################################
 
     score = 0
     lives = 3
+    poison_apple_timer = 0          # phase 2 추가 by woong ####################################
     start_screen()
     pygame.display.flip()
 
@@ -248,6 +252,7 @@ def main():
 
     food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
     food_spawn = True
+    is_poison_apple = False
 
     ####################################################################
     ####################phase2추가######################################
@@ -302,12 +307,43 @@ def main():
             snake_pos[0] += 20
 
         # Snake body growing mechanism
+
+        ####################phase2삭제######################################
+        ####################################################################
+        #snake_body.insert(0, list(snake_pos))
+        #if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
+        #    score += 1
+        #    food_spawn = False
+        #else:
+        #    snake_body.pop()
+        ####################phase2삭제######################################
+        ####################################################################
+
+
+
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
         snake_body.insert(0, list(snake_pos))
         if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
-            score += 1
+            if is_poison_apple:
+                lives -= 1
+                poison_apple_timer = 0
+                if lives <= 0:
+                    game_over(snake_body)
+            else:
+                score += 1
             food_spawn = False
+            is_poison_apple = False
         else:
             snake_body.pop()
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
+
+
+
 
         # Spawning food on the screen
         
@@ -322,11 +358,24 @@ def main():
         ####################################################################
         ####################phase2추가######################################
         ####################################################################
+
         if not food_spawn:
+            if random.random() < 0.2 and poison_apple_timer == 0:
+                is_poison_apple = True
+                poison_apple_timer = pygame.time.get_ticks()
+            else:
+                is_poison_apple = False
             food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
             while not not_in_obs(food_pos, obstacle_pos):
                 food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
-        food_spawn = True
+            food_spawn = True
+
+        # Remove poison apple after 5 seconds
+        if is_poison_apple and pygame.time.get_ticks() - poison_apple_timer > 5000:
+            is_poison_apple = False
+            food_spawn = False
+            poison_apple_timer = 0
+
         ####################################################################
         ####################phase2추가######################################
         ####################################################################
@@ -370,10 +419,33 @@ def main():
             snake_body_rect = snake_body_image.get_rect(topleft=(pos[0],pos[1]))
             game_window.blit(snake_body_image, snake_body_rect)
             #pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 20, 20))
-
+        
+        
+        
+        ####################phase2삭제######################################
+        ####################################################################
         # Snake food
-        apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
-        game_window.blit(apple_image, apple_rect)
+        #apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
+        #game_window.blit(apple_image, apple_rect)
+        ####################phase2삭제######################################
+        ####################################################################
+
+
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
+        # new Snake food
+        if is_poison_apple:
+            apple_rect = poison_apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
+            game_window.blit(poison_apple_image, apple_rect)
+        else:
+            apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
+            game_window.blit(apple_image, apple_rect)
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
+
 
         # Game Over conditions
         # Getting out of bounds
