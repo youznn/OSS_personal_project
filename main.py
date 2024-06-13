@@ -122,6 +122,7 @@ def game_over(snake_body):
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
+        poison_apple_timer = 0  #독사과 타이머 초기화!!
         return snake_pos
 
 #목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
@@ -328,12 +329,10 @@ def main():
         snake_body.insert(0, list(snake_pos))
         if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
             if is_poison_apple:
-                lives -= 1
-                poison_apple_timer = 0
-                if lives <= 0:
-                    game_over(snake_body)
+                snake_pos=game_over(snake_body)
             else:
                 score += 1
+                poison_apple_timer = 0
             food_spawn = False
             is_poison_apple = False
         else:
@@ -365,11 +364,11 @@ def main():
                 poison_apple_timer = pygame.time.get_ticks()
             else:
                 is_poison_apple = False
-            food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
+            food_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
             while not not_in_obs(food_pos, obstacle_pos):
-                food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
+                food_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
             food_spawn = True
-
+        
         # Remove poison apple after 5 seconds
         if is_poison_apple and pygame.time.get_ticks() - poison_apple_timer > 5000:
             is_poison_apple = False
