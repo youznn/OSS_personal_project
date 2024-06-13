@@ -18,6 +18,16 @@ snake_head_image = pygame.transform.scale(snake_head_image, (20,20))
 snake_body_image = pygame.image.load('./assets/snake_body.png')
 snake_body_image = pygame.transform.scale(snake_body_image, (20,20))
 
+####################################################################
+####################phase2추가######################################
+####################################################################
+redrec_image = pygame.image.load('./assets/redrec.png')
+redrec_image = pygame.transform.scale(redrec_image, (20, 20))
+####################################################################
+####################phase2추가######################################
+####################################################################
+
+
 font_path = 'Retro Gaming.ttf'
 
 # Difficulty settings
@@ -200,6 +210,22 @@ def show_score(choice, color, font, size):
         heart_rect = heart_image.get_rect(midtop=(frame_size_x/1.2 + i * 30, 15))
         game_window.blit(heart_image, heart_rect)
 
+    ####################################################################
+    ####################phase2추가######################################
+    ####################################################################
+# Check if position is not in obstacles
+def not_in_obs(pos, obstacles):
+    for obstacle in obstacles:
+        for i in range(2):
+            for j in range(2):
+                if pos == [obstacle[0] + i * 20, obstacle[1] + j * 20]:
+                    return False
+    return True
+    ####################################################################
+    ####################phase2추가######################################
+    ####################################################################
+
+
 score = 0
 lives = 0
 
@@ -219,6 +245,14 @@ def main():
 
     food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
     food_spawn = True
+
+    ####################################################################
+    ####################phase2추가######################################
+    ####################################################################
+    obstacle_pos = [[60 + 60, 60 + 60], [frame_size_x-80 - 40, frame_size_y-80 - 40]]  # 장애물 위치
+    ####################################################################
+    ####################phase2추가######################################
+    ####################################################################
 
     direction = 'RIGHT'
     change_to = direction
@@ -273,9 +307,26 @@ def main():
             snake_body.pop()
 
         # Spawning food on the screen
+        
+        ####################phase2삭제######################################
+        ####################################################################
+        #if not food_spawn:
+        #    food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
+        #food_spawn = True
+        ####################phase2삭제######################################
+        ####################################################################
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
         if not food_spawn:
             food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
+            while not not_in_obs(food_pos, obstacle_pos):
+                food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
         food_spawn = True
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
 
         # GFX
 
@@ -289,6 +340,22 @@ def main():
         else:  # direction == 'RIGHT'
             rotated_head = pygame.transform.rotate(snake_head_image, 270)
         game_window.fill(black)
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
+
+        # Draw obstacles
+        for pos in obstacle_pos:
+            for i in range(2):
+                for j in range(2):
+                    obstacle_rect = redrec_image.get_rect(topleft=(pos[0] + i*20, pos[1] + j*20))
+                    game_window.blit(redrec_image, obstacle_rect)
+
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
 
         snake_head_rect = rotated_head.get_rect(topleft=(snake_body[0][0], snake_body[0][1]))
         game_window.blit(rotated_head, snake_head_rect)
@@ -315,6 +382,21 @@ def main():
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
                 snake_pos = game_over(snake_body)
+        
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
+        # Touching the obstacles
+        for obstacle in obstacle_pos:
+            for i in range(2):
+                for j in range(2):
+                    if snake_pos == [obstacle[0] + i * 20, obstacle[1] + j * 20]:
+                        snake_pos = game_over(snake_body)        
+
+
+        ####################################################################
+        ####################phase2추가######################################
+        ####################################################################
 
         show_score(1, white, font_path, 20)
         # Refresh game screen
@@ -324,7 +406,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#############################################
-#2016314590김성웅 oss_pa2_phase ##############
-#############################################
