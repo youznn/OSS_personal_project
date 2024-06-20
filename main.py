@@ -269,6 +269,20 @@ def main():
         if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
             score += 1
             food_spawn = False
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
+            if difficulty == 10 and score % 3 == 0:
+                lives += 1
+            elif difficulty == 25 and score % 6 == 0:
+                lives += 1
+            elif difficulty == 40 and score % 9 == 0:
+                lives += 1
+            elif difficulty == 120 and score % 10 == 0:
+                lives += 1
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
         else:
             snake_body.pop()
 
