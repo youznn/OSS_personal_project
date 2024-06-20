@@ -107,6 +107,7 @@ def game_over(snake_body):
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
+        snake_body = [[snake_pos[0], snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]], [snake_pos[0] - 40, snake_pos[1]]]
         return snake_pos
 
 #목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
