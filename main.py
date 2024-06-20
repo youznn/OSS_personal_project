@@ -208,6 +208,8 @@ def main():
     # Game variables
     global score
     global lives
+    global food_direction
+    global food_speed
 
     score = 0
     lives = 3
@@ -219,6 +221,8 @@ def main():
 
     food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
     food_spawn = True
+    food_direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+    food_speed = difficulty
 
     direction = 'RIGHT'
     change_to = direction
@@ -290,6 +294,30 @@ def main():
         if not food_spawn:
             food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
         food_spawn = True
+
+        # Moving the food
+        if food_direction == 'UP':
+            food_pos[1] -= 20
+        if food_direction == 'DOWN':
+            food_pos[1] += 20
+        if food_direction == 'LEFT':
+            food_pos[0] -= 20
+        if food_direction == 'RIGHT':
+            food_pos[0] += 20
+
+        # Bouncing food off the walls
+        if food_pos[0] < 0:
+            food_pos[0] = 0
+            food_direction = 'RIGHT'
+        elif food_pos[0] > frame_size_x - 20:
+            food_pos[0] = frame_size_x - 20
+            food_direction = 'LEFT'
+        elif food_pos[1] < 0:
+            food_pos[1] = 0
+            food_direction = 'DOWN'
+        elif food_pos[1] > frame_size_y - 20:
+            food_pos[1] = frame_size_y - 20
+            food_direction = 'UP'
 
         # GFX
 
