@@ -197,12 +197,14 @@ def show_score(choice, color, font, size):
     game_window.blit(score_surface, score_rect)
     # pygame.display.flip()
     for i in range(lives):
-        heart_rect = heart_image.get_rect(midtop=(frame_size_x/1.2 + i * 30, 15))
+        heart_rect = heart_image.get_rect(midtop=(500 + i * 30, 15))
         game_window.blit(heart_image, heart_rect)
 
 score = 0
 lives = 0
-
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 # Main logic
 def main():
     # Game variables
@@ -272,6 +274,7 @@ def main():
         snake_body.insert(0, list(snake_pos))
         distance = math.sqrt((snake_pos[0] - food_pos[0])**2 + (snake_pos[1] - food_pos[1])**2)
         if distance < 20.01:
+            score += 1
             food_spawn = False
             #################################################
             ##################### Phase 2 ###################
@@ -364,5 +367,8 @@ def main():
         # Refresh rate
         fps_controller.tick(difficulty)
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 if __name__ == '__main__':
     main()
