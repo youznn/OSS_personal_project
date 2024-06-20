@@ -3,7 +3,7 @@ Snake Eater
 Made with PyGame
 """
 
-import pygame, sys, time, random
+import pygame, sys, time, random, math
 
 # Initialize Pygame
 pygame.init()
@@ -270,8 +270,8 @@ def main():
 
         # Snake body growing mechanism
         snake_body.insert(0, list(snake_pos))
-        if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
-            score += 1
+        distance = math.sqrt((snake_pos[0] - food_pos[0])**2 + (snake_pos[1] - food_pos[1])**2)
+        if distance < 20.01:
             food_spawn = False
             #################################################
             ##################### Phase 2 ###################
