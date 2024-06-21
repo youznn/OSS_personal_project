@@ -13,6 +13,8 @@ apple_image = pygame.image.load('./assets/apple.png')
 apple_image = pygame.transform.scale(apple_image, (20, 20))
 heart_image = pygame.image.load('./assets/heart.png')
 heart_image = pygame.transform.scale(heart_image, (20, 20))
+piret_image = pygame.image.load('./assets/died.png')
+piret_image = pygame.transform.scale(piret_image, (20,20))
 snake_head_image = pygame.image.load('./assets/snake_head.png')
 snake_head_image = pygame.transform.scale(snake_head_image, (20,20))
 snake_body_image = pygame.image.load('./assets/snake_body.png')
@@ -107,8 +109,9 @@ def game_over(snake_body):
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
+        snake_body.clear()
         snake_body = [[snake_pos[0], snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]], [snake_pos[0] - 40, snake_pos[1]]]
-        return snake_pos
+        return snake_pos, snake_body
 
 #목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
 def blink_snake(snake_body):
@@ -207,12 +210,18 @@ lives = 0
             ##################### Phase 2 ###################
             #################################################
 # Main logic
+# Main logic
+def generate_pirate_pos():
+    pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
+    return pirate_pos
+    
 def main():
     # Game variables
     global score
     global lives
     global food_direction
     global food_speed
+    global pirates
 
     score = 0
     lives = 3
@@ -230,6 +239,7 @@ def main():
     direction = 'RIGHT'
     change_to = direction
 
+    pirates = []
 
     while True:
         for event in pygame.event.get():
@@ -277,20 +287,18 @@ def main():
         if distance < 20.01:
             score += 1
             food_spawn = False
-            #################################################
-            ##################### Phase 2 ###################
-            #################################################
-            if difficulty == 10 and score % 3 == 0:
+            if difficulty < 25 and score % 3 == 0:
                 lives += 1
-            elif difficulty == 25 and score % 6 == 0:
+                pirates.append(generate_pirate_pos())
+            elif difficulty < 40 and score % 6 == 0:
                 lives += 1
-            elif difficulty == 40 and score % 9 == 0:
+                pirates.append(generate_pirate_pos())
+            elif difficulty < 120 and score % 9 == 0:
                 lives += 1
-            elif difficulty == 120 and score % 10 == 0:
+                pirates.append(generate_pirate_pos())
+            elif difficulty >= 120 and score % 10 == 0:
                 lives += 1
-            #################################################
-            ##################### Phase 2 ###################
-            #################################################
+                pirates.append(generate_pirate_pos())
         else:
             snake_body.pop()
 
@@ -324,7 +332,6 @@ def main():
             food_direction = 'UP'
 
         # GFX
-
         rotated_head = snake_head_image
         if direction == 'UP':
             rotated_head = pygame.transform.rotate(snake_head_image, 0)
@@ -340,27 +347,30 @@ def main():
         game_window.blit(rotated_head, snake_head_rect)
 
         for pos in snake_body[1:]:
-            # Snake body
-            # .draw.rect(play_surface, color, xy-coordinate)
-            # xy-coordinate -> .Rect(x, y, size_x, size_y)
-            snake_body_rect = snake_body_image.get_rect(topleft=(pos[0],pos[1]))
+            snake_body_rect = snake_body_image.get_rect(topleft=(pos[0], pos[1]))
             game_window.blit(snake_body_image, snake_body_rect)
-            #pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 20, 20))
 
         # Snake food
         apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
         game_window.blit(apple_image, apple_rect)
 
+        # Drawing pirates
+        for pirate_pos in pirates:
+            pirate_rect = piret_image.get_rect(topleft=(pirate_pos[0], pirate_pos[1]))
+            game_window.blit(piret_image, pirate_rect)  # 추가된 부분
+
         # Game Over conditions
-        # Getting out of bounds
         if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-20:
-            snake_pos = game_over(snake_body)
+            snake_pos, snake_body = game_over(snake_body)
         if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-20:
-            snake_pos = game_over(snake_body)
-        # Touching the snake body
+            snake_pos, snake_body = game_over(snake_body)
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
-                snake_pos = game_over(snake_body)
+                snake_pos, snake_body = game_over(snake_body)
+        # Check collision with pirates
+        for pirate_pos in pirates:
+            if snake_pos[0] == pirate_pos[0] and snake_pos[1] == pirate_pos[1]:
+                snake_pos, snake_body = game_over(snake_body)
 
         show_score(1, white, font_path, 20)
         # Refresh game screen
