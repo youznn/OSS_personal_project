@@ -13,6 +13,9 @@ snake_body_image = pygame.transform.scale(snake_body_image, (20,20))
 bomb_image = pygame.image.load('./assets/bomb.png')
 bomb_image = pygame.transform.scale(bomb_image, (20, 20))
 
+eat_sound = pygame.mixer.Sound('./assets/eat.wav')
+hit_sound = pygame.mixer.Sound('./assets/hit.wav')
+
 font_path = 'Retro Gaming.ttf'
 
 difficulty = 25
@@ -235,11 +238,13 @@ def main():
         if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
             score += 1
             food_spawn = False
+            eat_sound.play()
         else:
             snake_body.pop()
 
         if snake_pos[0] == bomb_pos[0] and snake_pos[1] == bomb_pos[1]:
             bomb_spawn = False
+            hit_sound.play()
             snake_pos = game_over(snake_body)
 
         if not food_spawn:
