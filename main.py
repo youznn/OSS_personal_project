@@ -212,9 +212,13 @@ lives = 0
 # Main logic
 # Main logic
 def generate_pirate_pos():
-    pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
-    return pirate_pos
-    
+    while True:
+        pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
+        center_pos = [frame_size_x // 2, frame_size_y // 2]
+        distance_from_center = math.sqrt((pirate_pos[0] - center_pos[0])**2 + (pirate_pos[1] - center_pos[1])**2)
+        if distance_from_center > 60:
+            return pirate_pos
+        
 def main():
     # Game variables
     global score
