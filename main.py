@@ -61,6 +61,9 @@ blue = pygame.Color(0, 0, 255)
 fps_controller = pygame.time.Clock()
 
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 #restart 화면입니다
 def restart_button():
     my_font = pygame.font.Font(font_path, 25)
@@ -88,6 +91,10 @@ def restart_button():
                     pygame.quit()
                     sys.exit()
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
+                    
 # Game Over
 def game_over(snake_body):
     global lives
@@ -112,6 +119,9 @@ def game_over(snake_body):
         snake_body = [[snake_pos[0], snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]], [snake_pos[0] - 40, snake_pos[1]]]
         return snake_pos, snake_body
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 def blink_snake(snake_body):
     blink_ticks = pygame.time.get_ticks()
     while pygame.time.get_ticks() - blink_ticks < 1000:
@@ -124,6 +134,9 @@ def blink_snake(snake_body):
         pygame.display.flip()
         pygame.time.wait(200)
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 def start_screen():
     # 초기 난이도 = MEDIUM
     global difficulty
@@ -169,6 +182,9 @@ def start_screen():
 
     pygame.display.flip()
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -216,6 +232,9 @@ def start_screen():
                     game_window.blit(mode_text, mode_rect)
                     pygame.display.flip()
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 
 
 # Score
@@ -244,7 +263,7 @@ def generate_pirate_pos():
         pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
         center_pos = [frame_size_x // 2, frame_size_y // 2]
         distance_from_center = math.sqrt((pirate_pos[0] - center_pos[0])**2 + (pirate_pos[1] - center_pos[1])**2)
-        if distance_from_center > 60:
+        if distance_from_center > 100:
             return pirate_pos
         
 def main():
@@ -321,17 +340,22 @@ def main():
         if distance < 20.01:
             score += 1
             food_spawn = False
-            if difficulty < 25 and score % 3 == 0:
+            if difficulty < 20 and score % 3 == 0:
                 lives += 1
                 pirates.append(generate_pirate_pos())
-            elif difficulty < 40 and score % 6 == 0:
+            elif difficulty < 35 and score % 6 == 0:
                 lives += 1
-                pirates.append(generate_pirate_pos())
+                # pirates.append(generate_pirate_pos())
             elif difficulty < 120 and score % 9 == 0:
                 lives += 1
-                pirates.append(generate_pirate_pos())
-            elif difficulty >= 120 and score % 10 == 0:
+                # pirates.append(generate_pirate_pos())
+            elif difficulty >= 80 and score % 10 == 0:
                 lives += 1
+                # pirates.append(generate_pirate_pos())
+            print("diff", difficulty)
+            if 20 <= difficulty <= 35 and score % 2 == 0:
+                pirates.append(generate_pirate_pos())
+            elif difficulty >= 40:
                 pirates.append(generate_pirate_pos())
         else:
             snake_body.pop()
@@ -416,7 +440,7 @@ def main():
         if time_attack_mode:
             difficulty += 0.02  # Gradually increase speed
             ticks += 1
-            if ticks % 50 == 0:  # Add a pirate every 100 ticks
+            if ticks % 80 == 0:  # Add a pirate every 80 ticks
                 pirates.append(generate_pirate_pos())
 
             #################################################
