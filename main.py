@@ -3,7 +3,7 @@ Snake Eater
 Made with PyGame
 """
 
-import pygame, sys, time, random
+import pygame, sys, time, random, math
 
 # Initialize Pygame
 pygame.init()
@@ -13,6 +13,8 @@ apple_image = pygame.image.load('./assets/apple.png')
 apple_image = pygame.transform.scale(apple_image, (20, 20))
 heart_image = pygame.image.load('./assets/heart.png')
 heart_image = pygame.transform.scale(heart_image, (20, 20))
+piret_image = pygame.image.load('./assets/died.png')
+piret_image = pygame.transform.scale(piret_image, (20,20))
 snake_head_image = pygame.image.load('./assets/snake_head.png')
 snake_head_image = pygame.transform.scale(snake_head_image, (20,20))
 snake_body_image = pygame.image.load('./assets/snake_body.png')
@@ -59,6 +61,9 @@ blue = pygame.Color(0, 0, 255)
 fps_controller = pygame.time.Clock()
 
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 #restart 화면입니다
 def restart_button():
     my_font = pygame.font.Font(font_path, 25)
@@ -86,6 +91,10 @@ def restart_button():
                     pygame.quit()
                     sys.exit()
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
+                    
 # Game Over
 def game_over(snake_body):
     global lives
@@ -107,9 +116,12 @@ def game_over(snake_body):
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
-        return snake_pos
+        snake_body = [[snake_pos[0], snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]], [snake_pos[0] - 40, snake_pos[1]]]
+        return snake_pos, snake_body
 
-#목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 def blink_snake(snake_body):
     blink_ticks = pygame.time.get_ticks()
     while pygame.time.get_ticks() - blink_ticks < 1000:
@@ -122,10 +134,13 @@ def blink_snake(snake_body):
         pygame.display.flip()
         pygame.time.wait(200)
 
-#초기 화면
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 def start_screen():
     # 초기 난이도 = MEDIUM
     global difficulty
+    global time_attack_mode
     difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
     diff_colors = [white, yellow, orange, red]
     cursor = 1
@@ -133,26 +148,43 @@ def start_screen():
     game_window.fill(black)
     start_surface = font.render('SNAKE EATER', True, green)
     start_rect = start_surface.get_rect()
-    start_rect.midtop = (frame_size_x/2, frame_size_y/4)
+    start_rect.midtop = (frame_size_x/2, frame_size_y/6)
     game_window.blit(start_surface, start_rect)
 
-    info_font = pygame.font.Font(font_path, 25) 
+    info_font = pygame.font.Font(font_path, 25)
     info_surface = info_font.render('PRESS ENTER TO START', True, white)
     info_rect = info_surface.get_rect()
-    info_rect.midtop = (frame_size_x/2, frame_size_y/1.8)
+    info_rect.midtop = (frame_size_x/2, frame_size_y/3)
     game_window.blit(info_surface, info_rect)
 
     # 난이도 선택
     diff_font = pygame.font.Font(font_path, 20)
     diff_info_text = diff_font.render('CHOOSE DIFFICULTY: UP/DOWN KEYS', True, white)
-    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/1.35))
-    game_window.blit(diff_info_text, diff_info_rect)
+    mode_info_text = diff_font.render('CHOOSE MODE: LEFT/RIGHT KEYS', True, white)
+    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/2.35))
+    mode_info_rect = mode_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/2))
+
     difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
     difficulty_rect = difficulty_text.get_rect(midtop=(frame_size_x/4, frame_size_y/1.3))
+
+    # 모드 선택
+    mode_font = pygame.font.Font(font_path, 20)
+    modes = ['NORMAL MODE', 'TIME ATTACK MODE']
+    mode_colors = [green, red]
+    mode_cursor = 0
+    mode_text = mode_font.render(modes[mode_cursor], True, mode_colors[mode_cursor])
+    mode_rect = mode_text.get_rect(midtop=(frame_size_x/1.5, frame_size_y/1.3))
+
+    game_window.blit(diff_info_text, diff_info_rect)
+    game_window.blit(mode_info_text, mode_info_rect)
     game_window.blit(difficulty_text, difficulty_rect)
+    game_window.blit(mode_text, mode_rect)
 
     pygame.display.flip()
 
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -161,6 +193,7 @@ def start_screen():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     difficulty = [10, 20, 35, 80][cursor]
+                    time_attack_mode = mode_cursor == 1
                     return
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
@@ -173,6 +206,8 @@ def start_screen():
                     game_window.blit(info_surface, info_rect)
                     game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
                     pygame.display.flip()
                 elif event.key == pygame.K_DOWN:
                     cursor = max(0, cursor- 1)
@@ -182,7 +217,24 @@ def start_screen():
                     game_window.blit(info_surface, info_rect)
                     game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
                     pygame.display.flip()
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    mode_cursor = (mode_cursor + 1) % 2
+                    mode_text = mode_font.render(modes[mode_cursor], True, mode_colors[mode_cursor])
+                    game_window.fill(black)
+                    game_window.blit(start_surface, start_rect)
+                    game_window.blit(info_surface, info_rect)
+                    game_window.blit(diff_info_text, diff_info_rect)
+                    game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
+                    pygame.display.flip()
+
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 
 
 # Score
@@ -197,17 +249,31 @@ def show_score(choice, color, font, size):
     game_window.blit(score_surface, score_rect)
     # pygame.display.flip()
     for i in range(lives):
-        heart_rect = heart_image.get_rect(midtop=(frame_size_x/1.2 + i * 30, 15))
+        heart_rect = heart_image.get_rect(midtop=(500 + i * 30, 15))
         game_window.blit(heart_image, heart_rect)
 
 score = 0
 lives = 0
-
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 # Main logic
+def generate_pirate_pos():
+    while True:
+        pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
+        center_pos = [frame_size_x // 2, frame_size_y // 2]
+        distance_from_center = math.sqrt((pirate_pos[0] - center_pos[0])**2 + (pirate_pos[1] - center_pos[1])**2)
+        if distance_from_center > 100:
+            return pirate_pos
+        
 def main():
     # Game variables
     global score
     global lives
+    global food_direction
+    global food_speed
+    global pirates
+    global difficulty
 
     score = 0
     lives = 3
@@ -219,10 +285,14 @@ def main():
 
     food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
     food_spawn = True
+    food_direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+    food_speed = difficulty
 
     direction = 'RIGHT'
     change_to = direction
 
+    pirates = []
+    ticks = 0  # Added for Time Attack Mode
 
     while True:
         for event in pygame.event.get():
@@ -266,9 +336,27 @@ def main():
 
         # Snake body growing mechanism
         snake_body.insert(0, list(snake_pos))
-        if snake_pos[0] == food_pos[0] and snake_pos[1] == food_pos[1]:
+        distance = math.sqrt((snake_pos[0] - food_pos[0])**2 + (snake_pos[1] - food_pos[1])**2)
+        if distance < 20.01:
             score += 1
             food_spawn = False
+            if difficulty < 20 and score % 3 == 0:
+                lives += 1
+                pirates.append(generate_pirate_pos())
+            elif difficulty < 35 and score % 6 == 0:
+                lives += 1
+                # pirates.append(generate_pirate_pos())
+            elif difficulty < 120 and score % 9 == 0:
+                lives += 1
+                # pirates.append(generate_pirate_pos())
+            elif difficulty >= 80 and score % 10 == 0:
+                lives += 1
+                # pirates.append(generate_pirate_pos())
+            print("diff", difficulty)
+            if 20 <= difficulty <= 35 and score % 2 == 0:
+                pirates.append(generate_pirate_pos())
+            elif difficulty >= 40:
+                pirates.append(generate_pirate_pos())
         else:
             snake_body.pop()
 
@@ -277,8 +365,31 @@ def main():
             food_pos = [random.randrange(1, (frame_size_x//20)) * 20, random.randrange(1, (frame_size_y//20)) * 20]
         food_spawn = True
 
-        # GFX
+        # Moving the food
+        if food_direction == 'UP':
+            food_pos[1] -= 20
+        if food_direction == 'DOWN':
+            food_pos[1] += 20
+        if food_direction == 'LEFT':
+            food_pos[0] -= 20
+        if food_direction == 'RIGHT':
+            food_pos[0] += 20
 
+        # Bouncing food off the walls
+        if food_pos[0] < 0:
+            food_pos[0] = 0
+            food_direction = 'RIGHT'
+        elif food_pos[0] > frame_size_x - 20:
+            food_pos[0] = frame_size_x - 20
+            food_direction = 'LEFT'
+        elif food_pos[1] < 0:
+            food_pos[1] = 0
+            food_direction = 'DOWN'
+        elif food_pos[1] > frame_size_y - 20:
+            food_pos[1] = frame_size_y - 20
+            food_direction = 'UP'
+
+        # GFX
         rotated_head = snake_head_image
         if direction == 'UP':
             rotated_head = pygame.transform.rotate(snake_head_image, 0)
@@ -294,27 +405,30 @@ def main():
         game_window.blit(rotated_head, snake_head_rect)
 
         for pos in snake_body[1:]:
-            # Snake body
-            # .draw.rect(play_surface, color, xy-coordinate)
-            # xy-coordinate -> .Rect(x, y, size_x, size_y)
-            snake_body_rect = snake_body_image.get_rect(topleft=(pos[0],pos[1]))
+            snake_body_rect = snake_body_image.get_rect(topleft=(pos[0], pos[1]))
             game_window.blit(snake_body_image, snake_body_rect)
-            #pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 20, 20))
 
         # Snake food
         apple_rect = apple_image.get_rect(topleft=(food_pos[0], food_pos[1]))
         game_window.blit(apple_image, apple_rect)
 
+        # Drawing pirates
+        for pirate_pos in pirates:
+            pirate_rect = piret_image.get_rect(topleft=(pirate_pos[0], pirate_pos[1]))
+            game_window.blit(piret_image, pirate_rect)  # 추가된 부분
+
         # Game Over conditions
-        # Getting out of bounds
         if snake_pos[0] < 0 or snake_pos[0] > frame_size_x-20:
-            snake_pos = game_over(snake_body)
+            snake_pos, snake_body = game_over(snake_body)
         if snake_pos[1] < 0 or snake_pos[1] > frame_size_y-20:
-            snake_pos = game_over(snake_body)
-        # Touching the snake body
+            snake_pos, snake_body = game_over(snake_body)
         for block in snake_body[1:]:
             if snake_pos[0] == block[0] and snake_pos[1] == block[1]:
-                snake_pos = game_over(snake_body)
+                snake_pos, snake_body = game_over(snake_body)
+        # Check collision with pirates
+        for pirate_pos in pirates:
+            if snake_pos[0] == pirate_pos[0] and snake_pos[1] == pirate_pos[1]:
+                snake_pos, snake_body = game_over(snake_body)
 
         show_score(1, white, font_path, 20)
         # Refresh game screen
@@ -322,5 +436,15 @@ def main():
         # Refresh rate
         fps_controller.tick(difficulty)
 
+        # Time Attack Mode speed increase
+        if time_attack_mode:
+            difficulty += 0.02  # Gradually increase speed
+            ticks += 1
+            if ticks % 80 == 0:  # Add a pirate every 80 ticks
+                pirates.append(generate_pirate_pos())
+
+            #################################################
+            ##################### Phase 2 ###################
+            #################################################
 if __name__ == '__main__':
     main()
