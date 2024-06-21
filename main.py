@@ -109,11 +109,9 @@ def game_over(snake_body):
     else:
         snake_pos = [frame_size_x//2 , frame_size_y//2]
         blink_snake(snake_body)
-        snake_body.clear()
         snake_body = [[snake_pos[0], snake_pos[1]], [snake_pos[0] - 20, snake_pos[1]], [snake_pos[0] - 40, snake_pos[1]]]
         return snake_pos, snake_body
 
-#목숨이 소진되었을 시에 snake가 깜박이게 하는 효과
 def blink_snake(snake_body):
     blink_ticks = pygame.time.get_ticks()
     while pygame.time.get_ticks() - blink_ticks < 1000:
@@ -126,10 +124,10 @@ def blink_snake(snake_body):
         pygame.display.flip()
         pygame.time.wait(200)
 
-#초기 화면
 def start_screen():
     # 초기 난이도 = MEDIUM
     global difficulty
+    global time_attack_mode
     difficulties = ['EASY', 'MEDIUM', 'HARD', 'IMPOSSIBLE']
     diff_colors = [white, yellow, orange, red]
     cursor = 1
@@ -137,23 +135,37 @@ def start_screen():
     game_window.fill(black)
     start_surface = font.render('SNAKE EATER', True, green)
     start_rect = start_surface.get_rect()
-    start_rect.midtop = (frame_size_x/2, frame_size_y/4)
+    start_rect.midtop = (frame_size_x/2, frame_size_y/6)
     game_window.blit(start_surface, start_rect)
 
-    info_font = pygame.font.Font(font_path, 25) 
+    info_font = pygame.font.Font(font_path, 25)
     info_surface = info_font.render('PRESS ENTER TO START', True, white)
     info_rect = info_surface.get_rect()
-    info_rect.midtop = (frame_size_x/2, frame_size_y/1.8)
+    info_rect.midtop = (frame_size_x/2, frame_size_y/3)
     game_window.blit(info_surface, info_rect)
 
     # 난이도 선택
     diff_font = pygame.font.Font(font_path, 20)
     diff_info_text = diff_font.render('CHOOSE DIFFICULTY: UP/DOWN KEYS', True, white)
-    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/1.35))
-    game_window.blit(diff_info_text, diff_info_rect)
+    mode_info_text = diff_font.render('CHOOSE MODE: LEFT/RIGHT KEYS', True, white)
+    diff_info_rect = diff_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/2.35))
+    mode_info_rect = mode_info_text.get_rect(midtop=(frame_size_x/2.4, frame_size_y/2))
+
     difficulty_text = font.render(difficulties[cursor], True, diff_colors[cursor])
     difficulty_rect = difficulty_text.get_rect(midtop=(frame_size_x/4, frame_size_y/1.3))
+
+    # 모드 선택
+    mode_font = pygame.font.Font(font_path, 20)
+    modes = ['NORMAL MODE', 'TIME ATTACK MODE']
+    mode_colors = [green, red]
+    mode_cursor = 0
+    mode_text = mode_font.render(modes[mode_cursor], True, mode_colors[mode_cursor])
+    mode_rect = mode_text.get_rect(midtop=(frame_size_x/1.5, frame_size_y/1.3))
+
+    game_window.blit(diff_info_text, diff_info_rect)
+    game_window.blit(mode_info_text, mode_info_rect)
     game_window.blit(difficulty_text, difficulty_rect)
+    game_window.blit(mode_text, mode_rect)
 
     pygame.display.flip()
 
@@ -165,6 +177,7 @@ def start_screen():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     difficulty = [10, 20, 35, 80][cursor]
+                    time_attack_mode = mode_cursor == 1
                     return
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
@@ -177,6 +190,8 @@ def start_screen():
                     game_window.blit(info_surface, info_rect)
                     game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
                     pygame.display.flip()
                 elif event.key == pygame.K_DOWN:
                     cursor = max(0, cursor- 1)
@@ -186,7 +201,21 @@ def start_screen():
                     game_window.blit(info_surface, info_rect)
                     game_window.blit(diff_info_text, diff_info_rect)
                     game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
                     pygame.display.flip()
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    mode_cursor = (mode_cursor + 1) % 2
+                    mode_text = mode_font.render(modes[mode_cursor], True, mode_colors[mode_cursor])
+                    game_window.fill(black)
+                    game_window.blit(start_surface, start_rect)
+                    game_window.blit(info_surface, info_rect)
+                    game_window.blit(diff_info_text, diff_info_rect)
+                    game_window.blit(difficulty_text, difficulty_rect)
+                    game_window.blit(mode_info_text, mode_info_rect)
+                    game_window.blit(mode_text, mode_rect)
+                    pygame.display.flip()
+
 
 
 # Score
@@ -210,7 +239,6 @@ lives = 0
             ##################### Phase 2 ###################
             #################################################
 # Main logic
-# Main logic
 def generate_pirate_pos():
     while True:
         pirate_pos = [random.randrange(1, (frame_size_x // 20)) * 20, random.randrange(1, (frame_size_y // 20)) * 20]
@@ -226,6 +254,7 @@ def main():
     global food_direction
     global food_speed
     global pirates
+    global difficulty
 
     score = 0
     lives = 3
@@ -244,6 +273,7 @@ def main():
     change_to = direction
 
     pirates = []
+    ticks = 0  # Added for Time Attack Mode
 
     while True:
         for event in pygame.event.get():
@@ -381,6 +411,13 @@ def main():
         pygame.display.update()
         # Refresh rate
         fps_controller.tick(difficulty)
+
+        # Time Attack Mode speed increase
+        if time_attack_mode:
+            difficulty += 0.02  # Gradually increase speed
+            ticks += 1
+            if ticks % 50 == 0:  # Add a pirate every 100 ticks
+                pirates.append(generate_pirate_pos())
 
             #################################################
             ##################### Phase 2 ###################
