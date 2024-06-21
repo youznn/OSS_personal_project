@@ -43,7 +43,7 @@ blue = pygame.Color(0, 0, 255)
 
 fps_controller = pygame.time.Clock()
 
-scoreboard = []
+
 
 def restart_button():
     my_font = pygame.font.Font(font_path, 25)
@@ -69,11 +69,15 @@ def restart_button():
                     pygame.quit()
                     sys.exit()
 
+highest_score = 0
+
 def game_over(snake_body):
-    global lives, scoreboard, score
+    global lives, highest_score, score
     lives -= 1
 
     if lives <= 0:
+        if highest_score < score :
+            highest_score = score
         my_font = pygame.font.Font(font_path, 90)
         game_over_surface = my_font.render('YOU DIED', True, red)
         game_over_rect = game_over_surface.get_rect()
@@ -166,14 +170,18 @@ def show_score(choice, color, font, size):
     score_font = pygame.font.Font(font, size)
     score_surface = score_font.render('Score : ' + str(score), True, color)
     score_rect = score_surface.get_rect()
+    highest_font = pygame.font.Font(font, size)
+    highest_surface = highest_font.render('Highest : ' + str(highest_score), True, color)
+    highest_rect = highest_surface.get_rect(midtop=(frame_size_x/3, 15))
+
     if choice == 1:
         score_rect.midtop = (frame_size_x/10, 15)
     else:
         score_rect.midtop = (frame_size_x/2, frame_size_y/1.25)
     game_window.blit(score_surface, score_rect)
-    # pygame.display.flip()
     for i in range(lives):
         heart_rect = heart_image.get_rect(midtop=(frame_size_x/1.2 + i * 30, 15))
+        game_window.blit(highest_surface, highest_rect)
         game_window.blit(heart_image, heart_rect)
 
 score = 0
@@ -183,6 +191,7 @@ def main():
    
     global score
     global lives
+    global highest_score
 
     score = 0
     lives = 3
@@ -287,6 +296,7 @@ def main():
                 snake_pos = game_over(snake_body)
 
         show_score(1, white, font_path, 20)
+
         pygame.display.update()
         fps_controller.tick(difficulty)
 
